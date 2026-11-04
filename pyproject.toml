@@ -1,10 +1,6 @@
-[build-system]
-build-backend = 'trampolim'
-requires = ['trampolim']
-
 [project]
-name = 'example2'
-version = '1.0.0'
-
-[project.scripts]
-example = 'example2:main'
+name = "hw-plan"
+version = "0.2.0"
+description = "Tkinter assignment planner with holiday API"
+requires-python = ">=3.10"
+dependencies = []
