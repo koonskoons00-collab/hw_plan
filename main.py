@@ -1,9 +1,13 @@
 import calendar
+import queue
+import threading
 import tkinter as tk
 from tkinter import ttk, messagebox
 from datetime import datetime
+
 from models import AssignmentManager
 from dialogs import AssignmentDialog, CompletedDialog
+from holiday_api import HolidayApiError, fetch_public_holidays
 
 
 class AssignmentApp(tk.Tk):
@@ -13,12 +17,22 @@ class AssignmentApp(tk.Tk):
         self.geometry("960x580")
         self.minsize(860, 500)
         self.manager = AssignmentManager()
+
         today = datetime.now()
         self.cur_year, self.cur_month = today.year, today.month
         self.selected_date = None
 
+        # 연도별 공휴일 자료를 저장하고, 작업 스레드의 결과를 안전하게 전달한다.
+        self.holidays_by_year = {}
+        self.holiday_errors = {}
+        self.holiday_loading = set()
+        self.holiday_queue = queue.Queue()
+
         self._build_ui()
         self.refresh_all()
+        self.after(150, self._poll_holiday_queue)
+        self._load_holidays(self.cur_year)
+
         self.lift()
         self.attributes('-topmost', True)
         self.after_idle(self.attributes, '-topmost', False)
@@ -34,7 +48,6 @@ class AssignmentApp(tk.Tk):
         # 캘린더 영역
         cal_box = ttk.LabelFrame(paned, text="캘린더", padding=8)
         paned.add(cal_box, weight=1)
-
         nav = ttk.Frame(cal_box)
         nav.pack(fill=tk.X, pady=(0, 4))
         ttk.Button(nav, text="◀", width=3, command=lambda: self._shift_month(-1)).pack(side=tk.LEFT)
@@ -42,6 +55,13 @@ class AssignmentApp(tk.Tk):
         self.lbl_cal_title.pack(side=tk.LEFT, expand=True)
         ttk.Button(nav, text="▶", width=3, command=lambda: self._shift_month(1)).pack(side=tk.LEFT)
         ttk.Button(nav, text="오늘", width=4, command=self._goto_today).pack(side=tk.LEFT, padx=(3, 0))
+
+        # API 데이터를 다시 요청할 수 있도록 버튼을 추가한다.
+        api_nav = ttk.Frame(cal_box)
+        api_nav.pack(fill=tk.X, pady=(0, 4))
+        ttk.Button(api_nav, text="공휴일 새로고침", command=self._refresh_holidays).pack(side=tk.LEFT)
+        self.lbl_holiday_state = ttk.Label(api_nav, text="공휴일 조회 전", wraplength=240)
+        self.lbl_holiday_state.pack(side=tk.LEFT, padx=(6, 0))
 
         days_hdr = ttk.Frame(cal_box)
         days_hdr.pack(fill=tk.X)
@@ -55,7 +75,6 @@ class AssignmentApp(tk.Tk):
         # 과제 목록 영역
         list_box = ttk.LabelFrame(paned, text="과제 목록", padding=8)
         paned.add(list_box, weight=2)
-
         top = ttk.Frame(list_box)
         top.pack(fill=tk.X, pady=(0, 4))
         self.lbl_list_title = ttk.Label(top, text="전체 과제", font=("맑은 고딕", 10, "bold"))
@@ -69,7 +88,6 @@ class AssignmentApp(tk.Tk):
             self.tree.heading(c, text=h)
             self.tree.column(c, width=w, anchor=a)
         self.tree.tag_configure("urgent", foreground="#D32F2F", font=("맑은 고딕", 9, "bold"))
-
         scroll = ttk.Scrollbar(list_box, orient=tk.VERTICAL, command=self.tree.yview)
         self.tree.configure(yscrollcommand=scroll.set)
         self.tree.pack(fill=tk.BOTH, expand=True, side=tk.TOP)
@@ -83,6 +101,27 @@ class AssignmentApp(tk.Tk):
         for text, cmd in actions:
             ttk.Button(btn_bar, text=text, command=cmd).pack(side=tk.LEFT, padx=2)
         ttk.Button(btn_bar, text="📦 완료된 과제", command=self._on_view_completed).pack(side=tk.RIGHT, padx=2)
+
+    def _holiday_name(self, day_str):
+        year = int(day_str[:4])
+        return self.holidays_by_year.get(year, {}).get(day_str)
+
+    def _update_holiday_state(self):
+        if self.cur_year in self.holiday_loading:
+            self.lbl_holiday_state.config(text="공휴일 조회 중...")
+            return
+        if self.cur_year in self.holiday_errors:
+            self.lbl_holiday_state.config(text="공휴일 조회 실패 (기본 기능 사용 가능)")
+            return
+        if self.selected_date and self.selected_date.startswith(f"{self.cur_year}-"):
+            name = self._holiday_name(self.selected_date)
+            if name:
+                self.lbl_holiday_state.config(text=f"선택 날짜 공휴일: {name}")
+                return
+        if self.cur_year in self.holidays_by_year:
+            self.lbl_holiday_state.config(text=f"{self.cur_year}년 공휴일 {len(self.holidays_by_year[self.cur_year])}건")
+        else:
+            self.lbl_holiday_state.config(text="공휴일 정보 없음")
 
     def refresh_all(self):
         urgent = self.manager.get_urgent()
@@ -98,15 +137,25 @@ class AssignmentApp(tk.Tk):
         cal = calendar.Calendar(firstweekday=6)
         counts = self.manager.get_due_count_map()
         today_str = datetime.now().strftime("%Y-%m-%d")
-
         for r, week in enumerate(cal.monthdatescalendar(self.cur_year, self.cur_month)):
             for c, day_date in enumerate(week):
                 d_str = day_date.strftime("%Y-%m-%d")
                 in_month = day_date.month == self.cur_month
                 cnt = counts.get(d_str, 0)
+                holiday = self._holiday_name(d_str) if in_month else None
                 text = f"{day_date.day}\n({cnt})" if cnt and in_month else str(day_date.day)
-                bg = "#FFE0B2" if (cnt and in_month) else ("#BBDEFB" if d_str == today_str else "white")
-                btn = tk.Button(self.cal_grid, text=text, bg=bg, fg="black" if in_month else "#BDBDBD",
+                if holiday:
+                    text += "\n휴일"
+                if cnt and in_month:
+                    bg = "#FFE0B2"
+                elif holiday:
+                    bg = "#F8BBD0"
+                elif d_str == today_str:
+                    bg = "#BBDEFB"
+                else:
+                    bg = "white"
+                fg = "red" if holiday else ("black" if in_month else "#BDBDBD")
+                btn = tk.Button(self.cal_grid, text=text, bg=bg, fg=fg,
                                 relief="solid", bd=1, font=("맑은 고딕", 8, "bold" if d_str == today_str else "normal"),
                                 command=lambda s=d_str: self._on_date_click(s))
                 btn.grid(row=r, column=c, sticky="nsew", padx=1, pady=1)
@@ -120,9 +169,44 @@ class AssignmentApp(tk.Tk):
         self.lbl_list_title.config(text=title_txt)
         for a in items:
             tag = "urgent" if a.is_urgent() else ""
+            holiday_mark = " [공휴일]" if self._holiday_name(a.due_date) else ""
             self.tree.insert("", tk.END, iid=str(a.id),
-                             values=(a.subject, a.title, f"{a.due_date} {a.due_time}", a.time_remaining_str()),
+                             values=(a.subject, a.title + holiday_mark, f"{a.due_date} {a.due_time}", a.time_remaining_str()),
                              tags=(tag,) if tag else ())
+        self._update_holiday_state()
+
+    def _load_holidays(self, year, force=False):
+        if year in self.holiday_loading or (year in self.holidays_by_year and not force):
+            return
+        self.holiday_loading.add(year)
+        self.holiday_errors.pop(year, None)
+        self._update_holiday_state()
+        threading.Thread(target=self._fetch_holidays_worker, args=(year,), daemon=True).start()
+
+    def _fetch_holidays_worker(self, year):
+        try:
+            result = fetch_public_holidays(year)
+            self.holiday_queue.put((year, result, None))
+        except (HolidayApiError, ValueError) as error:
+            self.holiday_queue.put((year, None, str(error)))
+
+    def _poll_holiday_queue(self):
+        try:
+            while True:
+                year, holidays, error = self.holiday_queue.get_nowait()
+                self.holiday_loading.discard(year)
+                if error:
+                    self.holiday_errors[year] = error
+                else:
+                    self.holidays_by_year[year] = holidays
+                    self.holiday_errors.pop(year, None)
+                self.refresh_all()
+        except queue.Empty:
+            pass
+        self.after(150, self._poll_holiday_queue)
+
+    def _refresh_holidays(self):
+        self._load_holidays(self.cur_year, force=True)
 
     def _selected_item(self):
         sel = self.tree.selection()
@@ -148,12 +232,14 @@ class AssignmentApp(tk.Tk):
         else:
             self.cur_month = m
         self.refresh_all()
+        self._load_holidays(self.cur_year)
 
     def _goto_today(self):
         t = datetime.now()
         self.cur_year, self.cur_month = t.year, t.month
         self.selected_date = t.strftime("%Y-%m-%d")
         self.refresh_all()
+        self._load_holidays(self.cur_year)
 
     def _on_add(self):
         AssignmentDialog(self, self.manager, default_date=self.selected_date, on_success=self.refresh_all)
