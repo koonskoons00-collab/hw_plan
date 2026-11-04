@@ -1132,3 +1132,537 @@ notepad api-chat.md
 그러면 너가 대화내용을 요약없이 마크다운으로 저장해주면 안돼?
 
 ---
+
+## ChatGPT
+
+네! 제가 대신 만들어 드렸습니다. 😊
+
+**이번 API 과제를 시작한 첫 질문부터 지금까지의 대화를 요약하지 않고 마크다운 파일로 정리했습니다.** 보내주신 스크린샷 20장도 함께 포함했습니다.
+
+**[대화 원문 + 스크린샷 전체 다운로드](api_chat_full_with_images.zip)**
+
+ZIP · 2.6MB · 마크다운 파일과 사진 20장
+
+**[api-chat.md 파일만 다운로드](api-chat.md)**
+
+Markdown · 약 38KB · 이미지 파일 별도
+
+참고로 ChatGPT의 공식 대화 내보내기 파일은 아니며, 이 대화에서 확인할 수 있는 내용을 순서대로 옮긴 기록입니다.
+
+### 이제 할 일
+
+1. 위의 **첫 번째 ZIP 파일**을 다운로드하고 압축을 푸세요.
+2. 압축을 푼 폴더에 있는 `api-chat.md`와 `api-chat-images` 폴더를 복사하세요.
+3. 바탕화면의 `wk5_2026313199` 폴더에 붙여넣으세요. 기존에 열어둔 빈 메모장은 저장하지 않고 닫아도 됩니다.
+
+이렇게 하면 교수님이 요구한 AI 대화 기록을 GitHub에 추가할 준비가 됩니다.
+
+**복사가 끝나면 "복사했어"라고 알려주세요.** 그다음 GitHub Commit → Push → Pull Request → Merge까지 이어서 진행하겠습니다.
+
+---
+
+## 사용자
+
+![압축파일 내부에 api-chat.md와 api-chat-images가 표시된 화면](api-chat-images/스크린샷_21.png)
+
+---
+
+## ChatGPT
+
+사진 확인했습니다! `api-chat.md` 파일과 `api-chat-images` 폴더가 모두 보입니다. 👍
+
+다만 화면 위에 **「압축 풀기」**, **「압축된 크기」**가 있는 것으로 보아 아직 ZIP 파일 내부입니다. 실제 GitHub 과제 폴더에 들어갔는지는 확인해야 합니다.
+
+이번에는 파일 탐색기를 사용하지 않고 **PowerShell로 정확한 위치에 복사**하겠습니다.
+
+### 19단계. AI 대화 파일 넣기
+
+기존 PowerShell 창으로 돌아가서 아래 명령어를 하나씩 실행하세요.
+
+**① 대화 파일 압축 풀기**
+
+```powershell
+Expand-Archive -Path "$HOME\Downloads\api_chat_full_with_images.zip" -DestinationPath "$env:TEMP\api-chat-extracted" -Force
+```
+
+**② 실제 GitHub 과제 폴더에 복사하기**
+
+```powershell
+Copy-Item "$env:TEMP\api-chat-extracted\api-chat.md" "." -Force
+```
+
+```powershell
+Copy-Item "$env:TEMP\api-chat-extracted\api-chat-images" "." -Recurse -Force
+```
+
+**③ 복사 결과 확인**
+
+```powershell
+git status
+```
+
+현재 PowerShell 위치는 반드시 아래와 같아야 합니다.
+
+`PS C:\Users\User\Desktop\wk5_2026313199>`
+
+정상적으로 복사되면 `Untracked files`에 `api-chat.md`와 `api-chat-images/`가 표시될 것입니다.
+
+**여기까지 실행한 화면을 보내주세요.** 확인 후 GitHub 커밋과 PR 제출을 진행하겠습니다.
+
+---
+
+## 사용자
+
+![압축 해제 및 복사 명령 후 git status 확인 화면](api-chat-images/스크린샷_22.png)
+
+---
+
+## ChatGPT
+
+좋습니다! 🎉 **AI 대화 원문과 스크린샷이 정상적으로 복사되었습니다.**
+
+사진에서 다음 두 항목을 확인했습니다.
+
+- `api-chat.md` — AI 대화 원문
+- `api-chat-images/` — 대화 중 사용한 스크린샷
+
+기존에 등록한 프로그램 파일 8개도 그대로 유지되어 있습니다.
+
+## 20단계. AI 대화 파일 Git에 추가하기
+
+현재 PowerShell에서 아래 명령어를 입력하세요.
+
+```powershell
+git add api-chat.md api-chat-images/
+```
+
+이어서 입력하세요.
+
+```powershell
+git status
+```
+
+정상적으로 등록되면 `api-chat.md`와 `api-chat-images/` 안의 이미지들도 **초록색**으로 표시됩니다.
+
+참고로 GitHub에 올리면 대화와 스크린샷이 공개될 수 있으니 개인정보나 API 키가 포함되어 있지 않은지도 확인해야 합니다.
+
+**여기까지 실행한 화면을 보내주세요!**
+
+그다음 바로 GitHub에 **Commit → Push → Pull Request → Merge**를 진행하겠습니다. 이제 제출까지 얼마 남지 않았습니다!
+
+---
+
+## 사용자
+
+![git add 명령 후 이미지와 대화 기록이 staged 된 화면](api-chat-images/스크린샷_23.png)
+
+---
+
+## ChatGPT
+
+좋습니다! 🎉 **GitHub에 제출할 파일들이 모두 정상적으로 등록되었습니다.**
+
+사진을 확인하니 다음 항목들이 초록색으로 표시되어 있습니다.
+
+- API 업데이트 프로그램 파일
+- `api-plan.md` 기획안
+- `README.md` 코드 설명
+- `api-chat.md` AI 대화 기록
+- `api-chat-images/` 스크린샷 20장
+- UV 실행 환경 파일
+
+파일 이름이 `\354\212...`처럼 보이는 것은 Git이 한글 파일명을 표시하는 방식이므로 오류가 아닙니다.
+
+## 21단계. Git Commit 하기
+
+이제 변경된 내용을 `api-update` 브랜치에 저장하겠습니다.
+
+단, GitHub 저장소가 공개 상태라면 스크린샷에 포함된 개인정보도 공개될 수 있으니 확인해 주세요.
+
+PowerShell에 아래 명령어를 입력하세요.
+
+```powershell
+git commit -m "Add public holiday API integration"
+```
+
+정상적으로 완료되면 다음과 비슷한 메시지가 나타납니다.
+
+```text
+[api-update xxxxxxx] Add public holiday API integration
+XX files changed
+```
+
+**여기까지 실행한 화면을 보내주세요!**
+
+그다음에는 `git push`로 GitHub에 업로드하고, Pull Request를 만들어 `main` 브랜치에 병합하겠습니다.
+
+---
+
+## 사용자
+
+![git commit 실행 완료 후 create mode 목록이 표시된 화면](api-chat-images/스크린샷_24.png)
+
+---
+
+## ChatGPT
+
+좋습니다! 🎉 **Git Commit이 정상적으로 완료되었습니다.**
+
+사진에서 `create mode 100644` 메시지가 나오고, 마지막에 PowerShell 입력창으로 돌아온 것을 확인했습니다. 오류는 없습니다.
+
+이제 GitHub에 업로드하겠습니다.
+
+### 22단계. GitHub에 Push 하기
+
+현재 PowerShell에서 아래 명령어를 입력하세요.
+
+```powershell
+git push -u origin api-update
+```
+
+이 명령어는 지금까지 작업한 `api-update` 브랜치를 GitHub 원격 저장소에 업로드합니다.
+
+정상적으로 완료되면 다음과 비슷한 메시지가 나타납니다.
+
+```text
+[new branch]      api-update -> api-update
+branch 'api-update' set up to track 'origin/api-update'
+```
+
+**여기까지 실행한 화면을 보내주세요!**
+
+다음 단계에서 GitHub 웹사이트로 이동해 **Pull Request(PR)를 만들고 `main` 브랜치에 Merge**하겠습니다. 이제 제출 직전입니다!
+
+---
+
+## 사용자
+
+![api-update 브랜치를 원격 GitHub로 push 한 결과](api-chat-images/스크린샷_25.png)
+
+---
+
+## ChatGPT
+
+좋습니다! 🎉 **GitHub Push가 정상적으로 완료되었습니다!**
+
+사진에서 다음 메시지를 확인했습니다.
+
+```text
+[new branch]      api-update -> api-update
+branch 'api-update' set up to track 'origin/api-update'.
+```
+
+이제 마지막 단계인 **Pull Request(PR) 생성 → main 브랜치에 Merge**만 남았습니다.
+
+## 23단계. Pull Request 만들기
+
+아래 링크를 클릭하세요.
+
+**GitHub Pull Request 생성**
+
+[api-update → main PR 만들기](https://github.com/koonskoons00-collab/hw_plan/compare/main...api-update?expand=1)
+
+GitHub 화면이 열리면 다음 내용을 확인하세요.
+
+- **base:** `main`
+- **compare:** `api-update`
+
+그다음 초록색 **Create pull request** 버튼을 누르세요.
+
+### PR 제목과 설명
+
+제목은 다음과 같이 작성하면 됩니다.
+
+**PR 제목**
+
+`Add public holiday API to assignment planner`
+
+설명은 아래 내용을 복사하세요.
+
+```markdown
+## 변경 사항
+- Nager.Date 공휴일 API 연동
+- 달력에 공휴일 표시 기능 추가
+- 공휴일 새로고침 기능 추가
+- 기존 과제 관리 및 마감일 알림 기능 유지
+- API 기획안, README 및 AI 대화 원문 추가
+
+## 테스트
+- `uv sync` 실행 성공
+- 단위 테스트 4개 통과
+- `uv run python main.py` 실행 성공
+- 2026년 10월 공휴일 표시 확인
+```
+
+**PR을 생성한 화면을 보내주세요.** 확인한 다음 `Merge pull request` 버튼을 눌러 과제를 마무리하겠습니다.
+
+아직은 `main`에 병합되지 않았으므로 **Merge까지 완료해야 제출 조건을 충족합니다.**
+
+---
+
+## 사용자
+
+![GitHub에서 Pull Request #2가 열린 화면](api-chat-images/스크린샷_26.png)
+
+제목과 설명 어디에 적어
+
+---
+
+## ChatGPT
+
+지금 화면을 보니 **Pull Request가 이미 정상적으로 생성되었습니다!** 🎉
+
+제목도 `Add public holiday API integration`으로 잘 작성되어 있습니다.
+
+다만 설명 부분에 `No description provided.`라고 표시되어 있으므로 설명만 추가하면 됩니다.
+
+### 1단계. PR 설명 추가하기
+
+1. 화면의 `No description provided.` 오른쪽에 마우스를 올려보세요.
+2. 나타나는 **점 세 개(···)** 메뉴를 클릭하세요.
+3. **Edit(수정)**을 선택하세요.
+4. 아래 내용을 복사해서 붙여넣으세요.
+
+**PR 설명**
+
+```markdown
+## 변경 사항
+- Nager.Date 공휴일 API 연동
+- 달력에 공휴일 표시 및 새로고침 기능 추가
+- 기존 과제 관리 기능 유지
+- API 기획안, README, AI 대화 원문 추가
+
+## 테스트
+- uv sync 성공
+- 단위 테스트 4개 통과
+- 프로그램 실행 및 공휴일 표시 확인
+```
+
+5. **Save(저장)** 버튼을 누르세요.
+
+### 2단계. main에 병합하기
+
+사진 아래쪽에 초록색 **Merge pull request** 버튼이 보입니다.
+
+설명을 저장한 후 다음 순서로 누르세요.
+
+1. `Merge pull request`
+2. `Confirm merge`
+
+그러면 `api-update` 브랜치의 변경 사항이 `main` 브랜치에 반영됩니다.
+
+**Merge까지 완료한 화면을 보내주세요.** 마지막으로 과제 제출용 GitHub URL을 확인하겠습니다.
+
+---
+
+## 사용자
+
+![Pull Request #2 설명을 입력하는 화면](api-chat-images/스크린샷_27.png)
+
+---
+
+## ChatGPT
+
+네! 사진을 확인했습니다. 😊 **PR 설명을 정확하게 입력하셨습니다.**
+
+이제 버튼만 누르면 됩니다.
+
+### 1단계. 설명 저장하기
+
+현재 화면 오른쪽에 있는 초록색 **`Update comment`** 버튼을 클릭하세요.
+
+그러면 작성한 설명이 저장됩니다.
+
+### 2단계. Pull Request 병합하기
+
+설명을 저장한 후 화면 아래쪽에 있는 초록색 **`Merge pull request`** 버튼을 누르세요.
+
+그다음 나타나는 **`Confirm merge`** 버튼까지 눌러주세요.
+
+이렇게 하면 `api-update` 브랜치의 코드가 `main` 브랜치에 합쳐집니다.
+
+**병합이 완료된 화면을 보내주세요!**
+
+그다음 교수님께 제출할 GitHub 주소를 최종 확인하겠습니다.
+
+---
+
+## 사용자
+
+![GitHub의 Confirm merge 단계에서 커밋 메시지를 보여주는 화면](api-chat-images/스크린샷_28.png)
+
+---
+
+## ChatGPT
+
+좋습니다! 🎉 **이제 마지막 버튼만 누르면 됩니다!**
+
+현재 화면은 Pull Request를 `main` 브랜치에 병합하기 직전입니다.
+
+### 지금 할 일
+
+1. **Commit message**는 현재 내용 그대로 두세요.
+2. **Extended description**도 수정하지 않아도 됩니다.
+3. 왼쪽 아래 초록색 **`Confirm merge`** 버튼을 클릭하세요.
+
+정상적으로 병합되면 GitHub에 보라색 **`Merged`** 표시가 나타납니다.
+
+**`Confirm merge`를 누른 다음 화면을 보내주세요.**
+
+그 화면까지 확인하면 교수님께 제출할 GitHub URL을 알려드리겠습니다!
+
+---
+
+## 사용자
+
+![Pull Request가 병합 완료되어 Merged 표시가 나타난 화면](api-chat-images/스크린샷_29.png)
+
+---
+
+## ChatGPT
+
+**제출 준비 완료**
+
+축하합니다! 🎉 **GitHub Pull Request 병합이 정상적으로 완료되었습니다!**
+
+사진에서 보라색 `Merged` 표시와 `Pull request successfully merged and closed` 메시지를 확인했습니다.
+
+## 최종 제출 정보
+
+**GitHub Repository**
+
+iCampus에 제출할 주소
+
+`https://github.com/koonskoons00-collab/hw_plan`
+
+**Pull Request #2** — Merged
+
+[완료된 Pull Request 확인](https://github.com/koonskoons00-collab/hw_plan/pull/2)
+
+## 과제 평가 항목 확인
+
+| 평가 항목 | 현재 상태 |
+|---|---|
+| 기획대로 작동하는가 (6점) | 프로그램 및 공휴일 API 작동 확인 |
+| 코드 재현 가능성 (6점) | `uv sync`, 테스트 통과 |
+| GitHub 관리 (4점) | 브랜치, PR, Merge 완료 |
+| 코드 이해 및 README (4점) | README 작성 및 포함 |
+
+실제 점수는 교수님의 코드 검토와 채점 기준에 따라 결정됩니다.
+
+## 이제 iCampus에 제출하세요!
+
+제출할 내용은 다음과 같습니다.
+
+```text
+GitHub Repository URL:
+https://github.com/koonskoons00-collab/hw_plan
+
+Pull Request:
+https://github.com/koonskoons00-collab/hw_plan/pull/2
+
+기존 대학생 과제 일정 관리 프로그램에 Nager.Date 공휴일 API를 연동하여 달력에 공휴일을 표시하고 새로고침할 수 있도록 업데이트하였습니다. 별도의 api-update 브랜치에서 작업하였으며, Pull Request를 통해 main 브랜치에 병합하였습니다.
+
+API Key는 필요하지 않습니다.
+```
+
+**이제 GitHub에서 `Delete branch` 버튼은 누르지 않아도 됩니다.** 그대로 두어도 제출에는 문제가 없습니다.
+
+남은 것은 iCampus에 위 저장소 URL을 제출하는 것입니다. 기한은 **오늘 11월 4일(수) 자정**입니다.
+
+---
+
+## 사용자
+
+다음 사항을 참고하시길 바랍니다.
+
+- 기획안을 별도 api-plan.md 파일로 추가해서 repository에 업로드합니다.
+
+- API에 Key가 필요한 경우 `.env`파일에 두고, README에 어떤 형식으로 키를 넣는지 설명합니다. 키는 별도로 icampus로 제출합니다.
+
+- 모든 코드는 UV로 동작 환경의 재현이 가능해야 합니다.
+
+- AI와 대화 내용 원문도 repository에 포함합니다.
+
+- 코드 전반에 대한 설명은 README에 작성하되 3페이지 이내로 작성합니다. 다 한건가요?
+
+---
+
+## ChatGPT
+
+네! 지금까지 진행한 내용과 GitHub 병합 화면을 기준으로 보면 **과제의 핵심 요구사항은 거의 모두 완료되었습니다.** 🎉
+
+다만 제출 전에 **두 가지를 확인·수정하면 더 좋겠습니다.**
+
+## 과제 요구사항 최종 점검
+
+| 교수님 요구사항 | 확인 결과 |
+|---|---|
+| `api-plan.md` 기획안 추가 | 완료 |
+| API Key는 `.env`에 저장 | 키가 필요 없는 API 사용 |
+| UV로 실행 환경 재현 | `uv sync` 성공 |
+| AI 대화 원문 포함 | 파일은 있지만 일부 대화 누락 |
+| README 3페이지 이내 작성 | 분량 및 내용 적절 |
+
+추가로 **`api-update` 브랜치 → PR #2 → `main` 병합**도 성공했습니다.
+
+---
+
+## 사용자
+
+일부 누락이 제출 이후 저희의 대화 말하는 건가요?
+
+---
+
+## ChatGPT
+
+네, 맞습니다! 정확히 이해하셨어요.
+
+제가 실제 `api-chat.md` 파일을 확인해 보니, **제가 대화 기록 파일을 만들어드렸던 시점까지만 저장되어 있습니다.**
+
+마지막으로 저장된 질문은 다음과 같습니다.
+
+> 그러면 너가 대화내용을 요약없이 마크다운으로 저장해주면 안돼?
+
+따라서 그 이후에 나눈 **GitHub Commit, Push, Pull Request, Merge 과정에 관한 대화**는 포함되어 있지 않습니다.
+
+다만 교수님이 요구한 것은 API 개발 과정의 AI 대화 원문이므로, 현재 파일에도 주요 개발 과정이 담겨 있습니다.
+
+**그래도 가장 확실한 방법은 이후 대화까지 추가하는 것입니다.** 이미 제출한 파일을 처음부터 다시 만들 필요는 없고, `api-chat.md`만 보완하여 GitHub에 추가 커밋하면 됩니다.
+
+원하시면 누락된 부분을 제가 마크다운 파일로 만들어드리고, 기존 GitHub 파일에 추가하는 방법까지 안내하겠습니다.
+
+---
+
+## 사용자
+
+근데 그러면 대화 파일이 두개가 생겨서 감점 안당하나요?
+
+---
+
+## ChatGPT
+
+아니요! **대화 파일이 두 개 있다고 해서 반드시 감점되는 것은 아닙니다.** 다만 교수님이 GitHub 파일 관리를 평가하므로 불필요한 중복 파일은 피하는 것이 좋습니다.
+
+현재 프로젝트에는 다음 파일들이 있습니다.
+
+- `conversation.md` : 기존 5주차 프로그램을 만들 때의 AI 대화 기록
+- `api-chat.md` : 이번 API 업데이트 과제의 AI 대화 기록
+
+**이 두 파일은 서로 다른 작업을 기록하므로 그대로 유지하는 것이 좋습니다.**
+
+그리고 이번에 누락된 대화는 새로운 파일을 만들지 않고 **기존 `api-chat.md` 맨 아래에 추가**하면 됩니다.
+
+즉, 최종적으로 대화 파일은 지금처럼 2개만 유지됩니다.
+
+제 추천은 기존 `conversation.md`는 그대로 두고, `api-chat.md`만 보완하는 것입니다. 이렇게 하면 과제별 대화 기록이 구분되어 GitHub 관리 측면에서도 깔끔합니다.
+
+다만 정확한 감점 여부는 교수님의 판단에 달려 있습니다.
+
+---
+
+## 사용자
+
+알겠습니다 진행하시죠
+
+---
